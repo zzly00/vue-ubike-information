@@ -2,12 +2,18 @@ const vm = Vue.createApp({
     data () {
       return {
         ubikeStops: [],
-        sortType: "default"
+        sortType: "default",
+        searchName: "",
+        selectedPage: 1
       }
     },
     computed: {
-      sortedColumn () {
-        let list = [...this.ubikeStops];
+      searchStop() {
+          this.selectedPage = 1
+          return this.ubikeStops.filter(stop => stop.sna.includes(this.searchName));
+      },
+      sortedColumn() {
+        let list = [...this.searchStop];
         const sortTypeArr = this.sortType.split("_");
 
         if(sortTypeArr[0] === 'asc' ) {
@@ -17,8 +23,14 @@ const vm = Vue.createApp({
           return list.sort((a, b) => b[sortTypeArr[1]] - a[sortTypeArr[1]]);
         }
         else {
-          return this.ubikeStops;
+          return this.searchStop;
         }
+      },
+      showTable() {
+        return this.sortedColumn.slice((this.selectedPage-1) * 20, (this.selectedPage * 20))
+      },
+      pageTotal() {
+        return Math.ceil(this.sortedColumn.length / 20)
       }
     },
     methods: {
@@ -37,6 +49,9 @@ const vm = Vue.createApp({
       },
       updateSortType(column){
         this.sortType = this.sortType.includes("desc") ? `asc_${column}` : `desc_${column}`;
+      },
+      changePage(n){
+        this.selectedPage = n;
       }
     },
     created() {

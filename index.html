@@ -4,30 +4,53 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
   <title>YouBike 臺北市公共自行車即時資訊</title>
-
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
   <style>
-    body{ padding: 1em;  }
+    body{ 
+      padding: 1em;
+      margin-bottom: 50px; 
+    }
+    .selected{
+      cursor: pointer;
+      user-select: none;
+    }
+    .pagers{
+      display: flex;
+      justify-content: center;
+      padding: 0;
+    }
+    .pager {
+      list-style: none;
+      cursor: pointer;
+      width: 30px;
+      height: 30px;
+      text-align: center;
+      line-height: 30px;
+      margin-top: 50px;
+      margin-right: 5px;
+      border: 1px solid #aaa;
+      user-select: none;
+    }
+
+    .pager a {
+      text-decoration: none;
+    }
+    .active{
+      background-color: #359edc;
+      color: #fff;
+    }
   </style>
 
 </head>
 <body>
-  <p>
-    練習 13： YouBike 臺北市公共自行車即時資訊 <br>
-    完成下列表格，並加入:
-    1. 站點名稱搜尋
-    2. 目前可用車輛 / 總停車格 的排序功能
-  </p>
-
-  <hr>
-
   <h1>YouBike 臺北市公共自行車即時資訊</h1>
 
   <div id="app">
     <p>
-      站點名稱搜尋: <input type="text">
+      站點名稱搜尋: <input type="text" v-model="searchName">
     </p>
 
     <table class="table table-striped">
@@ -36,12 +59,12 @@
           <th>#</th>
           <th>場站名稱</th>
           <th>場站區域</th>
-          <th @click="updateSortType('sbi')">目前可用車輛
+          <th @click="updateSortType('sbi')" class="selected">目前可用車輛
             <i v-if="sortType === 'asc_sbi'" class="fa fa-sort-asc" aria-hidden="true"></i>
             <i v-else-if="sortType === 'desc_sbi'" class="fa fa-sort-desc" aria-hidden="true"></i>
             <i v-else class="fa fa-sort" aria-hidden="true"></i>
           </th>
-          <th @click="updateSortType('tot')">總停車格
+          <th @click="updateSortType('tot')" class="selected">總停車格
             <i v-if="sortType === 'asc_tot'" class="fa fa-sort-asc" aria-hidden="true"></i>
             <i v-else-if="sortType === 'desc_tot'" class="fa fa-sort-desc" aria-hidden="true"></i>
             <i v-else class="fa fa-sort" aria-hidden="true"></i>
@@ -50,7 +73,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="s in sortedColumn">
+        <tr v-for="s in showTable">
           <td>{{ s.sno }}</td>
           <td>{{ s.sna }}</td>
           <td>{{ s.sarea }}</td>
@@ -61,7 +84,12 @@
       </tbody>
 
     </table>
-
+    
+    <ul class="pagers">
+      <li class="pager" v-for="n of pageTotal">
+        <p @click="changePage(n)" :class="{ active: n == selectedPage }">{{ n }}</p>
+      </li>
+    </ul>
   </div>
 
   <script src="https://unpkg.com/vue@next"></script>
