@@ -87,7 +87,7 @@
     
     <ul class="pagers">
       <li class="pager" v-for="n of pageTotal">
-        <p @click="changePage(n)" :class="{ active: n == selectedPage }">{{ n }}</p>
+        <p @click="changePage(n)" :class="{ active: n === selectedPage }">{{ n }}</p>
       </li>
     </ul>
   </div>
